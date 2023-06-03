@@ -1,0 +1,23 @@
+﻿services:
+  oboete.api:
+    build:
+      context: ./Oboete.API/Oboete.API/
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    restart: unless-stopped
+  db:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    volumes:
+      - oboete-postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: oboete 
+      POSTGRES_USER: oboete 
+      POSTGRES_PASSWORD: qpweiorlk1201f 
+    restart: unless-stopped
+      
+      
+volumes:
+  oboete-postgres-data:
