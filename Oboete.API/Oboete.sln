@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oboete.API", "Oboete.API\Oboete.API.csproj", "{93E7CEC7-EA3A-4B14-AA3B-A41CD3BF34D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D04A3D28-DAB9-43D7-9D6D-39D2AD1BB546}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-		docker-compose-debug.yml = docker-compose-debug.yml
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
