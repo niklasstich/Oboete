@@ -20,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("Oboete", new OpenApiInfo
+    c.SwaggerDoc("oboete", new OpenApiInfo
     {
         Title = "Oboete", Version = "v1.0.0"
     });
@@ -108,7 +108,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/oboete/swagger.json", "Oboete"));
 }
 
 app.UseHttpsRedirection();
