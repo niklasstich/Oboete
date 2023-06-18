@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Oboete.API.Entities;
 
@@ -66,43 +67,14 @@ public class JwtService : IJwtService
         };
     }
 
-    public async Task<JwtTokenIssuance> RefreshTokenAsync(string token, string refreshToken)
+    public async Task<JwtTokenIssuance> RefreshTokenAsync(string refreshToken)
     {
-        var identity = await GetIdentityFromTokenAsync(token);
-
-        var username = identity.Name;
-        if (username is null)
-            throw new SecurityTokenException("Invalid token contains no username");
-
         //check if user and refesh token are valid and not expired yet
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.Users.FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);
         if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiration <= DateTime.UtcNow)
-            throw new SecurityTokenException("Invalid refresh token");
+            throw new SecurityTokenException("Invalid or expired refresh token");
 
         return await IssueTokenAsync(user);
-    }
-
-    private async Task<ClaimsIdentity> GetIdentityFromTokenAsync(string token)
-    {
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = true,
-            ValidAudience = _jwtAudience,
-            ValidateIssuer = true,
-            ValidIssuer = _jwtIssuer,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey)),
-            ValidateLifetime = false
-        };
-
-        var tokenValidationResult = await _tokenHandler.ValidateTokenAsync(token, tokenValidationParameters);
-        if (!tokenValidationResult.IsValid ||
-            tokenValidationResult.SecurityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase))
-            throw new SecurityTokenException("Invalid JWT token");
-
-        return tokenValidationResult.ClaimsIdentity;
     }
 
     private string GenerateRefreshToken()
@@ -116,7 +88,7 @@ public class JwtService : IJwtService
     private JwtSecurityToken CreateJwtToken(IEnumerable<Claim> claims, SigningCredentials credentials,
         DateTime expiration)
     {
-        return new(
+        return new JwtSecurityToken(
             _jwtIssuer,
             _jwtAudience,
             claims,

@@ -58,7 +58,7 @@ public class UsersController : ControllerBase
             return BadRequest("Bad request");
         }
 
-        var token = await _jwtService.RefreshTokenAsync(request.Token, request.RefreshToken);
+        var token = await _jwtService.RefreshTokenAsync(request.RefreshToken);
         var response = new AuthenticationResponseDto
         {
             Expiration = token.Expiration,
