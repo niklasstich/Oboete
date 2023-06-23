@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Oboete.API.Dto;
+using Oboete.API.Controllers.Dto;
 using Oboete.API.Services.Jwt;
 using Oboete.API.Services.Users;
 
-namespace Oboete.API.Controllers;
+namespace Oboete.API.Controllers.Controllers;
 
 [ApiController]
 [Route("[controller]")]

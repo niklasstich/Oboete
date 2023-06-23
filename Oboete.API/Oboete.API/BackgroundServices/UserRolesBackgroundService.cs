@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using Oboete.API.Entities;
+using Oboete.API.Entities.Users;
 
 namespace Oboete.API.BackgroundServices;
 

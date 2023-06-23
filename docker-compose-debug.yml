@@ -1,7 +1,7 @@
 ﻿services:
   oboete.api:
     build:
-      context: ./Oboete.API/Oboete.API/
+      context: ./Oboete.API/
       dockerfile: Dockerfile-debug
     ports:
       - "80:80"

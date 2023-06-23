@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Oboete.API.Migrations
+namespace Oboete.API.Entities.Migrations
 {
     /// <inheritdoc />
     public partial class UsersWithRefreshTokens : Migration

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Oboete.API.Entities;
+namespace Oboete.API.Entities.Users;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {

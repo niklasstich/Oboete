@@ -5,8 +5,9 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Oboete.API.Entities;
+using Oboete.API.Entities.Users;
 
 namespace Oboete.API.Services.Jwt;
 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Oboete.API.Entities;
+namespace Oboete.API.Entities.Users;
 
 public class ApplicationUser : IdentityUser
 {

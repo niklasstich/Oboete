@@ -1,6 +1,5 @@
-using System.Timers;
 using Microsoft.EntityFrameworkCore;
-using Oboete.API.Entities;
+using Oboete.API.Entities.Users;
 using Timer = System.Timers.Timer;
 
 namespace Oboete.API.BackgroundServices;
@@ -25,6 +24,7 @@ public class EFCoreMigrationsBackgroundService : BackgroundService
     {
         _logger.LogInformation("Starting EF Core Migrations Task");
         await using var scope = _serviceProvider.CreateAsyncScope();
+        //why service locator?
         await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         
         var dbTimeoutHit = false;
@@ -37,6 +37,7 @@ public class EFCoreMigrationsBackgroundService : BackgroundService
         timer.Start();
         while (!await dbContext.Database.CanConnectAsync(stoppingToken))
         {
+            await Task.Delay(1000, stoppingToken);
             if (!dbTimeoutHit) continue;
             _logger.LogCritical("Database connection timed out after {DbTimeoutInSeconds} seconds", DbTimeoutInSeconds);
             throw new TimeoutException($"Database connection timed out after {DbTimeoutInSeconds} seconds");

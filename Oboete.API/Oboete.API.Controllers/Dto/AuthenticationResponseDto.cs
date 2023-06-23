@@ -1,4 +1,4 @@
-namespace Oboete.API.Dto;
+namespace Oboete.API.Controllers.Dto;
 
 public class AuthenticationResponseDto
 {

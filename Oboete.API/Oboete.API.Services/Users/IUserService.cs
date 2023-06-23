@@ -1,4 +1,4 @@
-using Oboete.API.Entities;
+using Oboete.API.Entities.Users;
 
 namespace Oboete.API.Services.Users;
 

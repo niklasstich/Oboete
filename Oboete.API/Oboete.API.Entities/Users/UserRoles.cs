@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Oboete.API.Entities;
+namespace Oboete.API.Entities.Users;
 
 public static class UserRoles
 {

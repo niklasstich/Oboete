@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Oboete.API.Entities;
+using Microsoft.Extensions.Configuration;
+using Oboete.API.Entities.Users;
 
 namespace Oboete.API.Services.Users;
 

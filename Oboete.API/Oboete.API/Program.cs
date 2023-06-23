@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -7,15 +6,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Oboete.API.BackgroundServices;
-using Oboete.API.Entities;
+using Oboete.API.Controllers.Controllers;
+using Oboete.API.Entities.Users;
 using Oboete.API.Services.Jwt;
 using Oboete.API.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var controllerAssembly = typeof(UsersController).Assembly;
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddApplicationPart(controllerAssembly);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -51,14 +52,15 @@ builder.Services.AddSwaggerGen(c =>
             new List<string>()
         }
     });
-    //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    //c.IncludeXmlComments(xmlPath);
 });
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options =>
+    {
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        options.UseNpgsql(connectionString);
+    });
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -71,7 +73,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         options.Password.RequireUppercase = true;
         options.Password.RequireLowercase = true;
     })
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>(TokenOptions.DefaultProvider);
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -102,6 +105,17 @@ builder.Services.AddHostedService<EFCoreMigrationsBackgroundService>();
 builder.Services.AddHostedService<AdminUserBackgroundService>();
 builder.Services.AddHostedService<UserRolesBackgroundService>();
 
+#if DEBUG
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5173").AllowAnyHeader();
+        policy.SetIsOriginAllowedToAllowWildcardSubdomains();
+    });
+});
+#endif
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -112,6 +126,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
