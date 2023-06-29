@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oboete.API.Controllers", "O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oboete.API.Services", "Oboete.API.Services\Oboete.API.Services.csproj", "{7B663EF9-189D-4665-BD72-10F6071CA0C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oboete.API.Shared", "Oboete.API.Shared\Oboete.API.Shared.csproj", "{A0AF859D-BF74-4E9A-A058-8780CD8D6F0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,5 +39,9 @@ Global
 		{7B663EF9-189D-4665-BD72-10F6071CA0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B663EF9-189D-4665-BD72-10F6071CA0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B663EF9-189D-4665-BD72-10F6071CA0C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0AF859D-BF74-4E9A-A058-8780CD8D6F0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0AF859D-BF74-4E9A-A058-8780CD8D6F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0AF859D-BF74-4E9A-A058-8780CD8D6F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0AF859D-BF74-4E9A-A058-8780CD8D6F0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
