@@ -7,11 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="LanguageExt.Core" Version="4.4.3" />
+      <PackageReference Include="LanguageExt.Transformers" Version="4.4.3" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Oboete.API.Services\Oboete.API.Services.csproj" />
+      <ProjectReference Include="..\Oboete.API.Shared\Oboete.API.Shared.csproj" />
     </ItemGroup>
 
 </Project>

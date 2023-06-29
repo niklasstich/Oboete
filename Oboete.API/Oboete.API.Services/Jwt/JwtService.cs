@@ -3,11 +3,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using LanguageExt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Oboete.API.Entities.Users;
+using Oboete.API.Services.Errors;
+using Oboete.API.Services.Errors.Jwt;
 
 namespace Oboete.API.Services.Jwt;
 
@@ -42,38 +45,34 @@ public class JwtService : IJwtService
                        throw new ApplicationException("No 'Jwt:Audience' found in configuration");
     }
 
-    public async Task<JwtTokenIssuance> IssueTokenAsync(ApplicationUser user)
+    public async Task<Either<ApplicationError, JwtTokenIssuance>> IssueTokenAsync(ApplicationUser user)
     {
         var expiration = DateTime.UtcNow.AddMinutes(_expirationMinutes);
 
-        var token = CreateJwtToken(
-            await CreateClaims(user),
-            CreateSigningCredentials(),
-            expiration
-        );
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-
-        var refreshToken = GenerateRefreshToken();
-
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpirationDays);
-        await _userManager.UpdateAsync(user);
-
-        return new JwtTokenIssuance
-        {
-            Token = tokenHandler.WriteToken(token),
-            Expiration = expiration,
-            RefreshToken = refreshToken
-        };
+        return await CreateClaims(user)
+            .MapAsync(claims => CreateJwtToken(claims, CreateSigningCredentials(), expiration))
+            .MapAsync(async token =>
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var refreshToken = GenerateRefreshToken();
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpirationDays);
+                await _userManager.UpdateAsync(user);
+                return new JwtTokenIssuance
+                {
+                    Token = tokenHandler.WriteToken(token),
+                    Expiration = expiration,
+                    RefreshToken = refreshToken
+                };
+            });
     }
 
-    public async Task<JwtTokenIssuance> RefreshTokenAsync(string refreshToken)
+    public async Task<Either<ApplicationError, JwtTokenIssuance>> RefreshTokenAsync(string refreshToken)
     {
         //check if user and refesh token are valid and not expired yet
         var user = await _userManager.Users.FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);
         if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiration <= DateTime.UtcNow)
-            throw new SecurityTokenException("Invalid or expired refresh token");
+            return new InvalidTokenError("Invalid or expired refresh token");
 
         return await IssueTokenAsync(user);
     }
@@ -98,12 +97,12 @@ public class JwtService : IJwtService
         );
     }
 
-    private async Task<IEnumerable<Claim>> CreateClaims(ApplicationUser user)
+    private async Task<Either<ApplicationError, IEnumerable<Claim>>> CreateClaims(ApplicationUser user)
     {
         if (user.UserName is null)
-            throw new ArgumentException("User must have a username", nameof(user));
+            return new InvalidApplicationUserError("User must have a username");
         if (user.Email is null)
-            throw new ArgumentException("User must have an email", nameof(user));
+            return new InvalidApplicationUserError("User must have an email");
         var roles = await _userManager.GetRolesAsync(user);
         var claims = new List<Claim>
         {
